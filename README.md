@@ -12,6 +12,62 @@ To write a yacc program to recognize a valid arithmetic expression that uses ope
 8.	Enter an arithmetic expression as input and the tokens are identified as output.
 # PROGRAM
 ```
+cdex3.l
+
+%{
+#include "y.tab.h"
+%}
+
+digit   [0-9]
+%%
+[ \t\n]+        ; // Ignore whitespace
+{digit}+        { yylval = atoi(yytext); return NUMBER; }
+[\+\-\*/]       { return *yytext; }
+\(              { return '('; }
+\)              { return ')'; }
+.               { return 0; }
+%%
+int yywrap() { return 1; }
+~~~
+
+cdex3.y
+~~~
+%{
+#include <stdio.h>
+#include <stdlib.h>
+void yyerror(const char *s);
+int yylex(void);
+%}
+
+%token NUMBER
+
+%%
+expr:   expr '+' term
+        | expr '-' term
+        | term
+        ;
+
+term:   term '*' factor
+        | term '/' factor
+        | factor
+        ;
+
+factor: '(' expr ')'
+        | NUMBER
+        ;
+
+%%
+
+void yyerror(const char *s) {
+    printf("Invalid arithmetic expression.\n");
+}
+
+int main() {
+    printf("Enter an arithmetic expression: ");
+    if (yyparse() == 0)
+        printf("Valid arithmetic expression.\n");
+    return 0;
+}
 
 ```
 # OUTPUT
