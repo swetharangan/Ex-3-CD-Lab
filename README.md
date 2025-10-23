@@ -28,10 +28,10 @@ digit   [0-9]
 .               { return 0; }
 %%
 int yywrap() { return 1; }
-~~~
+```
 
 cdex3.y
-~~~
+```
 %{
 #include <stdio.h>
 #include <stdlib.h>
